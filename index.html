@@ -7,11 +7,21 @@
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js">
+    </script>
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         :root {
             --black: #0A0A0A;
@@ -21,9 +31,12 @@
             --gray-dark: #2A2A2A;
             --gray-light: #B0B0A8;
             --overlay-gray: #8A8A8A;
+            --nav-height: 88px;
         }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: auto;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -33,13 +46,22 @@
             background: var(--white);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        ::selection { background: var(--orange); color: var(--white); }
+        ::selection {
+            background: var(--orange);
+            color: var(--white);
+        }
 
         /* ============ TYPOGRAPHY ============ */
-        .font-display { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
 
         .text-label {
             font-family: 'JetBrains Mono', monospace;
@@ -79,7 +101,9 @@
         /* ============ NAVIGATION ============ */
         .nav {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 50;
             display: flex;
             align-items: center;
@@ -88,10 +112,34 @@
             background: transparent;
             opacity: 0;
             animation: fadeIn 0.6s 0.8s forwards;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+            will-change: background;
         }
 
-        .nav-logo { display: flex; align-items: center; }
-        .nav-logo img { height: 40px; width: auto; }
+        .nav.scrolled-bg {
+            background: rgba(245, 245, 240, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            transition: filter 0.4s ease;
+        }
+        .nav-logo img {
+            height: 40px;
+            width: auto;
+            transition: filter 0.4s ease, opacity 0.4s ease;
+        }
+
+        /* Logo inversion pour fonds sombres */
+        .nav.light .nav-logo img {
+            filter: brightness(0) invert(1);
+        }
 
         .nav-links {
             display: flex;
@@ -102,20 +150,72 @@
         .nav-links a {
             text-decoration: none;
             color: var(--black);
-            transition: color 0.2s;
+            transition: color 0.4s ease, opacity 0.4s ease;
+            position: relative;
         }
 
-        .nav-links a:hover { color: var(--orange); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: currentColor;
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav.light .nav-links a {
+            color: var(--white);
+        }
 
         .nav-cta {
             background: var(--orange);
             color: var(--white) !important;
             padding: 10px 20px;
             text-decoration: none;
-            transition: background 0.2s;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-
-        .nav-cta:hover { background: var(--orange-dark); }
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--black);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+            z-index: 0;
+        }
+        .nav-cta:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .nav-cta span {
+            position: relative;
+            z-index: 1;
+        }
+        .nav-cta:hover {
+            background: var(--orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(232, 85, 42, 0.35);
+        }
+        .nav.light .nav-cta {
+            background: var(--white);
+            color: var(--black) !important;
+        }
+        .nav.light .nav-cta:hover {
+            background: var(--orange);
+            color: var(--white) !important;
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.25);
+        }
+        .nav.light .nav-cta::before {
+            background: var(--orange);
+        }
 
         .nav-hamburger {
             display: none;
@@ -125,20 +225,39 @@
             border: none;
             cursor: pointer;
             z-index: 60;
+            padding: 8px;
+            transition: gap 0.3s ease;
         }
-
         .nav-hamburger span {
             display: block;
             width: 24px;
-            height: 1px;
+            height: 1.5px;
             background: var(--black);
-            transition: transform 0.3s, opacity 0.3s;
+            transition: transform 0.35s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.3s ease,
+                background 0.4s ease;
+            border-radius: 1px;
+        }
+        .nav.light .nav-hamburger span {
+            background: var(--white);
+        }
+        .nav-hamburger.open span:nth-child(1) {
+            transform: translateY(6.5px) rotate(45deg);
+        }
+        .nav-hamburger.open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .nav-hamburger.open span:nth-child(3) {
+            transform: translateY(-6.5px) rotate(-45deg);
+        }
+        .nav-hamburger.open {
+            gap: 0;
         }
 
         .mobile-menu {
             position: fixed;
             inset: 0;
-            background: var(--white);
+            background: rgba(10, 10, 10, 0.97);
             z-index: 55;
             display: flex;
             flex-direction: column;
@@ -147,14 +266,23 @@
             gap: 40px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            visibility: hidden;
         }
-
-        .mobile-menu.open { opacity: 1; pointer-events: auto; }
-        .mobile-menu a { text-decoration: none; color: var(--black); }
-        .mobile-menu a:hover { color: var(--orange); }
-
-        /* ===== BOUTON FERMETURE MENU MOBILE ===== */
+        .mobile-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+        }
+        .mobile-menu a {
+            text-decoration: none;
+            color: var(--white);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .mobile-menu a:hover {
+            color: var(--orange);
+            transform: scale(1.05);
+        }
         .mobile-menu-close {
             position: absolute;
             top: 24px;
@@ -165,21 +293,22 @@
             align-items: center;
             justify-content: center;
             background: none;
-            border: 1px solid var(--black);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             cursor: pointer;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 28px;
             font-weight: 700;
-            color: var(--black);
+            color: var(--white);
             line-height: 1;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             z-index: 60;
+            border-radius: 50%;
         }
-
         .mobile-menu-close:hover {
             background: var(--orange);
             border-color: var(--orange);
             color: var(--white);
+            transform: rotate(90deg);
         }
 
         /* ============ HERO ============ */
@@ -201,7 +330,8 @@
 
         .hero-decor {
             position: absolute;
-            top: 16px; left: 32px;
+            top: 16px;
+            left: 32px;
             font-size: clamp(80px, 12vw, 180px);
             line-height: 0.85;
             letter-spacing: -0.04em;
@@ -242,12 +372,34 @@
             color: var(--black);
         }
 
-        .hero-name h1 span {
-            display: block;
-        }
-
         .hero-name .name-line {
             display: block;
+            overflow: hidden;
+        }
+        .hero-name .name-line-inner {
+            display: inline-block;
+            transform: translateY(100%);
+            animation: revealWord 1s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+        }
+        .hero-name .name-line:nth-child(1) .name-line-inner {
+            animation-delay: 0.3s;
+        }
+        .hero-name .name-line:nth-child(2) .name-line-inner {
+            animation-delay: 0.5s;
+        }
+        .hero-name .name-line:nth-child(3) .name-line-inner {
+            animation-delay: 0.7s;
+        }
+
+        @keyframes revealWord {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .hero-stats {
@@ -258,17 +410,43 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 24px;
             opacity: 0;
-            animation: fadeIn 0.8s 0.8s ease forwards;
+            animation: fadeIn 0.8s 0.9s ease forwards;
         }
 
-        .stat-label { color: var(--gray-light); margin-bottom: 4px; }
-        .stat-value { font-size: 13px; font-weight: 500; }
+        .stat {
+            position: relative;
+        }
+        .stat-label {
+            color: var(--gray-light);
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+        }
+        .stat-value .count {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--orange);
+            display: inline-block;
+            line-height: 1;
+        }
+        .stat-value .count-suffix {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--orange);
+        }
 
         .hero-right {
             position: relative;
             height: 100dvh;
+            overflow: hidden;
         }
-
         .hero-right img {
             width: 100%;
             height: 100%;
@@ -276,6 +454,7 @@
             filter: grayscale(100%);
             opacity: 0;
             animation: slideInRight 1.2s 0.4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+            will-change: transform;
         }
 
         .hero-subtitle {
@@ -285,24 +464,33 @@
             text-align: right;
             opacity: 0;
             animation: fadeIn 0.8s 0.7s ease forwards;
+            z-index: 3;
         }
-
         .hero-subtitle .line {
             width: 40px;
             height: 1px;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.5);
             margin-bottom: 16px;
             margin-left: auto;
+            animation: expandLine 1.5s 0.9s ease forwards;
+            transform-origin: right;
+            transform: scaleX(0);
         }
-
+        @keyframes expandLine {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
         .hero-subtitle p {
             color: var(--white);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
-
         .hero-subtitle p.orange {
             color: var(--orange);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
 
         .scroll-indicator {
@@ -316,18 +504,17 @@
             gap: 8px;
             z-index: 10;
             opacity: 0;
-            animation: fadeIn 0.6s 1.2s ease forwards;
+            animation: fadeIn 0.6s 1.3s ease forwards;
         }
-
-        .scroll-indicator.hidden { display: none; }
-
+        .scroll-indicator.hidden {
+            display: none;
+        }
         .scroll-line {
             position: relative;
             width: 1px;
             height: 32px;
             background: var(--black);
         }
-
         .scroll-dot {
             position: absolute;
             top: 0;
@@ -339,10 +526,15 @@
             background: var(--black);
             animation: scrollDot 1.5s ease-out infinite;
         }
-
         @keyframes scrollDot {
-            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
-            100% { transform: translateX(-50%) translateY(26px); opacity: 0; }
+            0% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) translateY(26px);
+                opacity: 0;
+            }
         }
 
         /* ============ ABOUT ============ */
@@ -354,10 +546,10 @@
             padding: 120px 48px;
             z-index: 2;
         }
-
         .about-decor {
             position: absolute;
-            top: 32px; right: 32px;
+            top: 32px;
+            right: 32px;
             font-size: clamp(100px, 15vw, 220px);
             line-height: 0.85;
             letter-spacing: -0.04em;
@@ -367,50 +559,54 @@
             pointer-events: none;
             user-select: none;
         }
-
         .about-inner {
             position: relative;
             z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
         }
-
         .about-grid {
             display: grid;
             grid-template-columns: 100px 1fr 1fr;
             gap: 40px;
         }
-
         .about-keywords {
             display: flex;
             flex-direction: column;
             gap: 12px;
             align-self: center;
         }
-
         .about-keywords span {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             opacity: 0;
             transform: translateY(10px);
+            transition: color 0.3s ease;
+            cursor: default;
         }
-
-        .about-photo-wrap { position: relative; }
-
+        .about-keywords span:hover {
+            color: var(--orange);
+        }
+        .about-photo-wrap {
+            position: relative;
+        }
         .about-photo {
             width: 100%;
             height: 500px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
             position: relative;
         }
-
         .about-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             filter: grayscale(100%);
+            transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), filter 0.6s ease;
         }
-
+        .about-photo:hover img {
+            transform: scale(1.04);
+            filter: grayscale(60%);
+        }
         .about-photo-overlay {
             position: absolute;
             inset: 0;
@@ -418,17 +614,24 @@
             flex-direction: column;
             justify-content: center;
             padding: 40px;
+            pointer-events: none;
         }
-
         .about-photo-overlay .accent-line {
             width: 40px;
             height: 2px;
             background: var(--orange);
             margin-bottom: 16px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
         }
-
-        .about-photo-overlay .label { color: var(--orange); margin-bottom: 8px; }
-
+        .about-photo-overlay .accent-line.revealed {
+            transform: scaleX(1);
+        }
+        .about-photo-overlay .label {
+            color: var(--orange);
+            margin-bottom: 8px;
+        }
         .about-photo-overlay h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -437,22 +640,27 @@
             letter-spacing: -0.02em;
             color: var(--white);
         }
-
-        .about-photo-overlay h2.fade { color: rgba(255,255,255,0.4); }
-
+        .about-photo-overlay h2.fade {
+            color: rgba(255, 255, 255, 0.4);
+        }
         .about-bio {
             align-self: center;
             margin-left: -60px;
         }
-
         .about-bio-inner {
             background: var(--orange);
             padding: 40px;
             max-width: 320px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
-
-        .about-bio-inner .label { color: rgba(255,255,255,0.7); margin-bottom: 12px; }
-
+        .about-bio-inner:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(232, 85, 42, 0.3);
+        }
+        .about-bio-inner .label {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+        }
         .about-bio-inner h3 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -461,154 +669,219 @@
             color: var(--white);
             margin-bottom: 16px;
         }
-
         .about-bio-inner p {
             font-size: 16px;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 24px;
             line-height: 1.6;
         }
-
         .about-bio-inner a {
             color: var(--white);
             text-decoration: none;
+            transition: opacity 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .about-bio-inner a:hover {
+            opacity: 0.8;
+        }
+        .about-bio-inner a .arrow {
+            transition: transform 0.3s ease;
+        }
+        .about-bio-inner a:hover .arrow {
+            transform: translateX(6px);
         }
 
-        .about-bio-inner a:hover { text-decoration: underline; }
-
-        /* ============ WORK ============ */
+        /* ============ WORK — FULLSCREEN HORIZONTAL ============ */
         .work {
             position: relative;
             width: 100%;
             background: var(--white);
-            padding: 160px 0 120px;
-            overflow: hidden;
             z-index: 2;
+            overflow: hidden;
         }
-
         .work-decor {
             position: absolute;
-            top: 32px; left: 32px;
+            top: 32px;
+            left: 32px;
             font-size: clamp(100px, 15vw, 220px);
             line-height: 0.85;
             letter-spacing: -0.04em;
             color: var(--black);
             opacity: 0.04;
-            z-index: 0;
+            z-index: 10;
             pointer-events: none;
             user-select: none;
         }
-
         .work-header {
-            position: relative;
-            z-index: 1;
+            position: absolute;
+            z-index: 10;
             padding: 0 48px;
-            max-width: 1400px;
-            margin: 0 auto 64px;
+            top: 80px;
+            left: 0;
+            pointer-events: none;
         }
-
         .work-header .label-wrap {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 24px;
         }
-
         .work-header .label-wrap .line {
             width: 60px;
             height: 1px;
             background: var(--gray-light);
         }
-
-        .work-header .label-wrap span { color: var(--gray-light); }
-
+        .work-header .label-wrap span {
+            color: var(--gray-light);
+        }
         .work-header h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             color: var(--black);
+            text-shadow: 0 0 60px rgba(245, 245, 240, 0.7);
+        }
+        .work-header h2.orange {
+            color: var(--orange);
+            text-shadow: 0 0 60px rgba(245, 245, 240, 0.7);
         }
 
-        .work-header h2.orange { color: var(--orange); }
-
-        .work-gallery {
-            display: flex;
-            gap: 24px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 0 48px 40px;
-            scrollbar-width: none;
+        .work-pin-wrapper {
             position: relative;
-            z-index: 1;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
         }
-
-        .work-gallery::-webkit-scrollbar { display: none; }
-
-        .project-card {
+        .work-horizontal-track {
+            display: flex;
+            height: 100vh;
+            will-change: transform;
+        }
+        .project-card-full {
             flex-shrink: 0;
-            width: 45vw;
-            max-width: 600px;
-            scroll-snap-align: start;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             cursor: pointer;
             text-decoration: none;
             color: inherit;
         }
-
-        .project-card .img-wrap {
-            width: 100%;
-            aspect-ratio: 4/3;
-            overflow: hidden;
-            background: var(--gray-dark);
-            margin-bottom: 20px;
+        .project-card-full .card-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
         }
-
-        .project-card .img-wrap img {
+        .project-card-full .card-bg img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%);
-            transition: transform 0.6s ease-out;
+            filter: grayscale(100%) brightness(0.55);
+            transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), filter 0.6s ease;
+            will-change: transform;
         }
-
-        .project-card:hover .img-wrap img { transform: scale(1.05); }
-
-        .project-card h3 {
+        .project-card-full:hover .card-bg img {
+            transform: scale(1.06);
+            filter: grayscale(40%) brightness(0.65);
+        }
+        .project-card-full .card-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            pointer-events: none;
+        }
+        .project-card-full .card-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.15em;
+            color: var(--orange);
+            margin-bottom: 16px;
+            display: block;
+        }
+        .project-card-full h3 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: clamp(28px, 3.5vw, 48px);
-            color: var(--black);
-            margin-bottom: 4px;
-            transition: color 0.2s;
+            font-size: clamp(48px, 8vw, 100px);
+            color: var(--white);
+            line-height: 1;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            transition: transform 0.4s ease;
+        }
+        .project-card-full:hover h3 {
+            transform: translateY(-6px);
+        }
+        .project-card-full .card-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            transition: opacity 0.3s ease;
+        }
+        .project-card-full .card-hover-line {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 60px;
+            height: 2px;
+            background: var(--orange);
+            z-index: 3;
+            transform-origin: center;
+            transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .project-card-full:hover .card-hover-line {
+            transform: translateX(-50%) scaleX(1);
         }
 
-        .project-card:hover h3 { color: var(--orange); }
-
-        .project-card .meta {
-            color: var(--gray-light);
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--gray-light);
+        /* Alternance visuelle */
+        .project-card-full:nth-child(even) .card-content {
+            text-align: left;
+            align-self: flex-end;
+            padding-left: 80px;
+            padding-bottom: 100px;
+        }
+        .project-card-full:nth-child(odd) .card-content {
+            text-align: right;
+            align-self: flex-start;
+            padding-right: 80px;
+            padding-top: 100px;
         }
 
         .work-cta {
-            padding: 40px 48px 0;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+            position: absolute;
+            bottom: 40px;
+            right: 48px;
+            z-index: 10;
         }
-
         .work-cta a {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             color: var(--black);
             text-decoration: none;
-            transition: color 0.2s;
+            transition: color 0.3s ease, transform 0.3s ease;
+            background: rgba(245, 245, 240, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            border-radius: 2px;
         }
-
-        .work-cta a:hover { color: var(--orange); }
-
-        .work-cta a .arrow { transition: transform 0.2s; }
-        .work-cta a:hover .arrow { transform: translateX(4px); }
+        .work-cta a:hover {
+            color: var(--orange);
+            transform: translateY(-2px);
+        }
+        .work-cta a .arrow {
+            transition: transform 0.3s ease;
+        }
+        .work-cta a:hover .arrow {
+            transform: translateX(4px);
+        }
 
         /* ============ CONTACT ============ */
         .contact {
@@ -619,10 +892,10 @@
             padding: 120px 48px;
             z-index: 2;
         }
-
         .contact-decor {
             position: absolute;
-            top: 32px; right: 32px;
+            top: 32px;
+            right: 32px;
             font-size: clamp(100px, 15vw, 220px);
             line-height: 0.85;
             letter-spacing: -0.04em;
@@ -632,40 +905,44 @@
             pointer-events: none;
             user-select: none;
         }
-
         .contact-inner {
             position: relative;
             z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
         }
-
         .contact-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0;
         }
-
         .contact-panel {
             position: relative;
             background: var(--orange);
             padding: 80px 60px;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
-
+        .contact-panel:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 60px rgba(232, 85, 42, 0.4);
+        }
         .contact-panel .decor {
             position: absolute;
-            top: 32px; right: 32px;
+            top: 32px;
+            right: 32px;
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: clamp(80px, 12vw, 180px);
             line-height: 0.85;
-            color: rgba(255,255,255,0.1);
+            color: rgba(255, 255, 255, 0.1);
             pointer-events: none;
             user-select: none;
         }
-
-        .contact-panel .label { color: rgba(255,255,255,0.8); margin-bottom: 16px; }
-
+        .contact-panel .label {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+        }
         .contact-panel h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -674,62 +951,93 @@
             color: var(--white);
             margin-bottom: 24px;
         }
-
         .contact-panel p {
             font-size: 16px;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 32px;
             max-width: 400px;
             line-height: 1.6;
         }
-
         .contact-panel .cta-btn {
             display: inline-block;
             background: var(--white);
             color: var(--orange);
             padding: 16px 32px;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
-
-        .contact-panel .cta-btn:hover {
+        .contact-panel .cta-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
             background: var(--black);
-            color: var(--white);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+            z-index: -1;
         }
-
+        .contact-panel .cta-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .contact-panel .cta-btn:hover {
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
         .contact-right {
             padding-left: 64px;
             display: flex;
             flex-direction: column;
         }
-
-        .contact-details { padding-top: 80px; }
-
+        .contact-details {
+            padding-top: 80px;
+        }
         .contact-item {
             padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: border-color 0.3s ease;
         }
-
-        .contact-item:last-child { border-bottom: none; }
-
-        .contact-item .label { color: var(--gray-light); margin-bottom: 4px; }
+        .contact-item:hover {
+            border-bottom-color: var(--orange);
+        }
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        .contact-item .label {
+            color: var(--gray-light);
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+        .contact-item:hover .label {
+            color: var(--orange);
+        }
         .contact-item .value {
             font-size: 13px;
             color: var(--white);
         }
-
-        .contact-portrait { margin-top: 40px; }
-
+        .contact-portrait {
+            margin-top: 40px;
+            overflow: hidden;
+        }
         .contact-portrait img {
             width: 100%;
             height: 280px;
             object-fit: cover;
             filter: grayscale(100%);
+            transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), filter 0.6s ease;
         }
-
+        .contact-portrait:hover img {
+            transform: scale(1.04);
+            filter: grayscale(40%);
+        }
         .contact-portrait .caption {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             margin-top: 12px;
+            transition: color 0.3s ease;
         }
 
         /* ============ FOOTER ============ */
@@ -737,8 +1045,8 @@
             width: 100%;
             border-top: 1px solid var(--gray-light);
             padding: 40px 48px;
+            background: var(--white);
         }
-
         .footer-inner {
             max-width: 1400px;
             margin: 0 auto;
@@ -747,14 +1055,13 @@
             justify-content: space-between;
             gap: 24px;
         }
-
         .footer-socials {
             display: flex;
             align-items: center;
             gap: 24px;
         }
-
-        .footer a, .footer button {
+        .footer a,
+        .footer button {
             color: var(--gray-dark);
             text-decoration: none;
             background: none;
@@ -762,532 +1069,953 @@
             cursor: pointer;
             font-family: inherit;
             font-size: inherit;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
-
-        .footer a:hover, .footer button:hover {
+        .footer a:hover,
+        .footer button:hover {
             color: var(--orange);
-            text-decoration: underline;
+            transform: translateY(-2px);
+        }
+        .footer-socials a {
+            position: relative;
+        }
+        .footer-socials a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--orange);
+            transition: width 0.3s ease;
+        }
+        .footer-socials a:hover::after {
+            width: 100%;
         }
 
         /* ============ SCROLL REVEAL ============ */
         .reveal {
             opacity: 0;
             transform: translateY(60px);
-            transition: opacity 0.9s cubic-bezier(0.33, 1, 0.68, 1), transform 0.9s cubic-bezier(0.33, 1, 0.68, 1);
+            transition: opacity 0.9s cubic-bezier(0.33, 1, 0.68, 1),
+                transform 0.9s cubic-bezier(0.33, 1, 0.68, 1);
         }
-
         .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
-
-        .reveal-delay-1 { transition-delay: 0.15s; }
-        .reveal-delay-2 { transition-delay: 0.30s; }
-        .reveal-delay-3 { transition-delay: 0.45s; }
-        .reveal-delay-4 { transition-delay: 0.60s; }
+        .reveal-delay-1 {
+            transition-delay: 0.15s;
+        }
+        .reveal-delay-2 {
+            transition-delay: 0.30s;
+        }
+        .reveal-delay-3 {
+            transition-delay: 0.45s;
+        }
+        .reveal-delay-4 {
+            transition-delay: 0.60s;
+        }
 
         /* ============ KEYFRAMES ============ */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
-
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(60px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
         @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(80px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(80px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 1024px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .hero-left { order: 2; padding: 40px 32px; }
-            .hero-right { order: 1; height: 50vh; }
-            .hero-stats { grid-template-columns: repeat(2, 1fr); }
-            .hero-name h1 { font-size: clamp(36px, 10vw, 70px); }
-            .about-grid { grid-template-columns: 1fr; }
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-left {
+                order: 2;
+                padding: 40px 32px;
+            }
+            .hero-right {
+                order: 1;
+                height: 50vh;
+            }
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-name h1 {
+                font-size: clamp(36px, 10vw, 70px);
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
             .about-keywords {
                 flex-direction: row;
                 flex-wrap: wrap;
                 margin-bottom: 24px;
             }
-            .about-bio { margin-left: 0; margin-top: 24px; }
-            .about-bio-inner { max-width: 100%; }
-            .contact-grid { grid-template-columns: 1fr; }
-            .contact-right { padding-left: 0; padding-top: 40px; }
-            .project-card { width: 60vw; }
+            .about-bio {
+                margin-left: 0;
+                margin-top: 24px;
+            }
+            .about-bio-inner {
+                max-width: 100%;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-right {
+                padding-left: 0;
+                padding-top: 40px;
+            }
+
+            /* Work — passer en scroll vertical sur tablette */
+            .work-pin-wrapper {
+                height: auto;
+                overflow: visible;
+            }
+            .work-horizontal-track {
+                flex-direction: column;
+                height: auto;
+                transform: none !important;
+            }
+            .project-card-full {
+                width: 100%;
+                height: 70vh;
+                min-height: 500px;
+            }
+            .project-card-full:nth-child(even) .card-content,
+            .project-card-full:nth-child(odd) .card-content {
+                text-align: center;
+                align-self: center;
+                padding: 40px;
+            }
+            .work-header {
+                position: relative;
+                top: auto;
+                padding: 60px 32px 40px;
+            }
+            .work-cta {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                padding: 40px 32px;
+                text-align: center;
+            }
         }
 
         @media (max-width: 768px) {
-            .nav { padding: 20px 24px; }
-            .nav-links { display: none; }
-            .nav-hamburger { display: flex; }
-            .hero-left { padding: 32px 24px; }
-            .hero-name h1 { font-size: clamp(32px, 12vw, 60px); }
-            .hero-stats { grid-template-columns: repeat(2, 1fr); }
-            .scroll-indicator { display: none; }
-            .about { padding: 80px 24px; }
-            .about-photo { height: 350px; }
-            .about-bio-inner { padding: 24px; }
-            .work { padding: 80px 0; }
-            .work-header, .work-gallery, .work-cta { padding-left: 24px; padding-right: 24px; }
-            .project-card { width: 85vw; }
-            .contact { padding: 80px 24px; }
-            .contact-panel { padding: 40px 24px; }
-            .contact-portrait img { height: 200px; }
-            .footer { padding: 32px 24px; }
-            .footer-inner { flex-direction: column; text-align: center; }
-            .mobile-menu-close { top: 20px; right: 20px; width: 44px; height: 44px; }
+            .nav {
+                padding: 20px 24px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .nav-hamburger {
+                display: flex;
+            }
+            .hero-left {
+                padding: 32px 24px;
+            }
+            .hero-name h1 {
+                font-size: clamp(32px, 12vw, 60px);
+            }
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .scroll-indicator {
+                display: none;
+            }
+            .about {
+                padding: 80px 24px;
+            }
+            .about-photo {
+                height: 350px;
+            }
+            .about-bio-inner {
+                padding: 24px;
+            }
+            .work-header {
+                padding: 60px 24px 30px;
+            }
+            .project-card-full {
+                height: 60vh;
+                min-height: 400px;
+            }
+            .project-card-full h3 {
+                font-size: clamp(36px, 10vw, 60px);
+            }
+            .project-card-full:nth-child(even) .card-content,
+            .project-card-full:nth-child(odd) .card-content {
+                padding: 24px;
+            }
+            .contact {
+                padding: 80px 24px;
+            }
+            .contact-panel {
+                padding: 40px 24px;
+            }
+            .contact-portrait img {
+                height: 200px;
+            }
+            .footer {
+                padding: 32px 24px;
+            }
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .mobile-menu-close {
+                top: 20px;
+                right: 20px;
+                width: 44px;
+                height: 44px;
+            }
+            .stat-value .count {
+                font-size: 22px;
+            }
+            .stat-value .count-suffix {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- ============ NAVIGATION ============ -->
-<nav class="nav" id="nav">
-    <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
-        <img src="./images/logo_gmk_main.png" alt="GMK_Dev">
-    </a>
-    <div class="nav-links">
-        <a href="#work" class="text-label">WORK</a>
-        <a href="#about" class="text-label">ABOUT</a>
-        <a href="#contact" class="text-label">CONTACT</a>
-        <a href="#contact" class="text-cta nav-cta">LET'S TALK</a>
-    </div>
-    <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-</nav>
-
-<!-- ============ MENU MOBILE AVEC BOUTON FERMETURE ============ -->
-<div class="mobile-menu" id="mobileMenu">
-    <button class="mobile-menu-close" onclick="closeMenu()" aria-label="Fermer le menu">×</button>
-    <a href="#work" class="font-display text-display-l" onclick="closeMenu()">WORK</a>
-    <a href="#about" class="font-display text-display-l" onclick="closeMenu()">ABOUT</a>
-    <a href="#contact" class="font-display text-display-l" onclick="closeMenu()">CONTACT</a>
-    <a href="#contact" class="text-cta nav-cta" style="margin-top:24px;" onclick="closeMenu()">LET'S TALK</a>
-</div>
-
-<!-- ============ HERO ============ -->
-<section class="hero" id="hero">
-    <canvas class="hero-grain" id="grainCanvas"></canvas>
-    <div class="hero-decor font-display">GMK</div>
-
-    <div class="hero-grid">
-        <div class="hero-left">
-            <div class="hero-name">
-                <h1>
-                    <span class="name-line">Gedeon</span>
-                    <span class="name-line">Mabengi</span>
-                    <span class="name-line">Katambaku</span>
-                </h1>
-            </div>
-
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-label text-label">LOCATION</div>
-                    <div class="stat-value">LUBUMBASHI / RDC</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label text-label">EXPERIENCE</div>
-                    <div class="stat-value">3 YEARS</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label text-label">PROJECTS</div>
-                    <div class="stat-value">10+ SHIPPED</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label text-label">FOCUS</div>
-                    <div class="stat-value">WEB / MOBILE / UI</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-right">
-            <img src="./images/Hero-portrait.png" alt="GMK_Dev">
-            <div class="hero-subtitle">
-                <div class="line"></div>
-                <p class="text-label">CREATIVE DEVELOPER</p>
-                <p class="text-label orange">& AI PRODUCT BUILDER</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="scroll-indicator" id="scrollIndicator">
-        <span class="text-label">SCROLL</span>
-        <div class="scroll-line">
-            <div class="scroll-dot"></div>
-        </div>
-    </div>
-</section>
-
-<!-- ============ ABOUT ============ -->
-<section class="about" id="about">
-    <div class="about-decor font-display">01</div>
-    <div class="about-inner">
-        <div class="about-grid">
-            <div class="about-keywords">
-                <span class="text-label reveal">POWER</span>
-                <span class="text-label reveal">ORIGIN</span>
-                <span class="text-label reveal">BEAUTY</span>
-                <span class="text-label reveal">ASYLUM</span>
-                <span class="text-label reveal">OBSESSION</span>
-                <span class="text-label reveal">STRENGTH</span>
-            </div>
-
-            <div class="about-photo-wrap">
-                <div class="about-photo reveal">
-                    <img src="./images/about-photo.png" alt="Mission">
-                    <div class="about-photo-overlay">
-                        <div class="accent-line"></div>
-                        <p class="text-label label">ABOUT //</p>
-                        <h2>MISSION</h2>
-                        <h2 class="fade">MACHINE</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="about-bio">
-                <div class="about-bio-inner reveal">
-                    <p class="text-label label">PHILOSOPHY</p>
-                    <h3>OBSESSED WITH PRECISION</h3>
-                    <p>I craft digital experiences where code meets design. Every function, every animation, every line is intentional. No bloat. No noise. Just raw development.</p>
-                    <a href="#contact" class="text-cta">READ MORE &rarr;</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============ WORK ============ -->
-<section class="work" id="work">
-    <div class="work-decor font-display">02</div>
-    <div class="work-header">
-        <div class="label-wrap">
-            <div class="line"></div>
-            <span class="text-label">SELECTED WORKS</span>
-        </div>
-        <h2 class="text-display-l reveal">BUILT WITH</h2>
-        <h2 class="text-display-l orange reveal">OBSESSION</h2>
-    </div>
-
-    <div class="work-gallery" id="workGallery">
-        <div class="project-card" data-index="0">
-            <div class="img-wrap">
-                <img src="./images/project-nocta.jpg" alt="NOCTA">
-            </div>
-            <h3>NOCTA</h3>
-            <p class="text-label meta">BRAND IDENTITY / 2024</p>
-        </div>
-        <div class="project-card" data-index="1">
-            <div class="img-wrap">
-                <img src="./images/project-mirage.jpg" alt="MIRAGE">
-            </div>
-            <h3>MIRAGE</h3>
-            <p class="text-label meta">WEB EXPERIENCE / 2024</p>
-        </div>
-        <div class="project-card" data-index="2">
-            <div class="img-wrap">
-                <img src="./images/project-steel.jpg" alt="STEEL">
-            </div>
-            <h3>STEEL</h3>
-            <p class="text-label meta">E-COMMERCE / 2023</p>
-        </div>
-        <div class="project-card" data-index="3">
-            <div class="img-wrap">
-                <img src="./images/project-prism.jpg" alt="PRISM">
-            </div>
-            <h3>PRISM</h3>
-            <p class="text-label meta">INTERACTIVE / 2023</p>
-        </div>
-    </div>
-
-    <div class="work-cta reveal">
-        <a href="#work" class="text-cta">
-            <span>VIEW ALL PROJECTS</span>
-            <span class="arrow">&rarr;</span>
+    <!-- ============ NAVIGATION ============ -->
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+            <img src="./images/logo_gmk_main.png" alt="GMK_Dev">
         </a>
+        <div class="nav-links">
+            <a href="#work" class="text-label"><span>WORK</span></a>
+            <a href="#about" class="text-label"><span>ABOUT</span></a>
+            <a href="#contact" class="text-label"><span>CONTACT</span></a>
+            <a href="#contact" class="text-cta nav-cta"><span>LET'S TALK</span></a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- ============ MENU MOBILE ============ -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" onclick="closeMenu()" aria-label="Fermer le menu">×</button>
+        <a href="#work" class="font-display text-display-l" onclick="closeMenu()">WORK</a>
+        <a href="#about" class="font-display text-display-l" onclick="closeMenu()">ABOUT</a>
+        <a href="#contact" class="font-display text-display-l" onclick="closeMenu()">CONTACT</a>
+        <a href="#contact" class="text-cta nav-cta" style="margin-top:24px;" onclick="closeMenu()"><span>LET'S TALK</span></a>
     </div>
-</section>
 
-<!-- ============ CONTACT ============ -->
-<section class="contact" id="contact">
-    <div class="contact-decor font-display">03</div>
-    <div class="contact-inner">
-        <div class="contact-grid">
-            <div class="contact-panel reveal">
-                <span class="decor font-display" aria-hidden="true">03</span>
-                <p class="text-label label">LET'S CREATE</p>
-                <h2>START A</h2>
-                <h2>PROJECT</h2>
-                <p>Have an idea? Let's talk. I take on select projects that challenge the boundary between design and technology.</p>
-                <a href="mailto:mabengikatambaku@gmail.com" class="text-cta cta-btn">GET IN TOUCH &rarr;</a>
-            </div>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+        <canvas class="hero-grain" id="grainCanvas"></canvas>
+        <div class="hero-decor font-display">GMK</div>
 
-            <div class="contact-right">
-                <div class="contact-details">
-                    <div class="contact-item reveal reveal-delay-1">
-                        <p class="text-label label">EMAIL</p>
-                        <p class="value">mabengikatambaku@gmail.com</p>
-                    </div>
-                    <div class="contact-item reveal reveal-delay-2">
-                        <p class="text-label label">LOCATION</p>
-                        <p class="value">LUBUMBASHI, RDC</p>
-                    </div>
-                    <div class="contact-item reveal reveal-delay-3">
-                        <p class="text-label label">AVAILABILITY</p>
-                        <p class="value">OPEN FOR PROJECTS</p>
-                    </div>
+        <div class="hero-grid">
+            <div class="hero-left">
+                <div class="hero-name">
+                    <h1>
+                        <span class="name-line"><span class="name-line-inner">Gedeon</span></span>
+                        <span class="name-line"><span class="name-line-inner">Mabengi</span></span>
+                        <span class="name-line"><span class="name-line-inner">Katambaku</span></span>
+                    </h1>
                 </div>
 
-                <div class="contact-portrait reveal reveal-delay-4">
-                    <img src="./images/contact-portrait.png" alt="GMK_Dev">
-                    <p class="text-label caption">GMK_Dev &mdash; CREATIVE DEVELOPER</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-label text-label">LOCATION</div>
+                        <div class="stat-value">LUBUMBASHI / RDC</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-label">EXPERIENCE</div>
+                        <div class="stat-value"><span class="count" data-target="3">0</span> YEARS</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-label">PROJECTS</div>
+                        <div class="stat-value"><span class="count" data-target="10">0</span><span class="count-suffix">+</span> SHIPPED</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label text-label">FOCUS</div>
+                        <div class="stat-value">WEB / MOBILE / UI</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <img src="./images/Hero-portrait.png" alt="GMK_Dev">
+                <div class="hero-subtitle">
+                    <div class="line"></div>
+                    <p class="text-label">CREATIVE DEVELOPER</p>
+                    <p class="text-label orange">& AI PRODUCT BUILDER</p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ============ FOOTER ============ -->
-<footer class="footer">
-    <div class="footer-inner">
-        <span class="text-label">&copy; 2025 GMK_Dev</span>
-        <div class="footer-socials">
-            <a href="#" class="text-label">TW</a>
-            <a href="#" class="text-label">GH</a>
-            <a href="#" class="text-label">LI</a>
-            <a href="#" class="text-label">IG</a>
+        <div class="scroll-indicator" id="scrollIndicator">
+            <span class="text-label">SCROLL</span>
+            <div class="scroll-line">
+                <div class="scroll-dot"></div>
+            </div>
         </div>
-        <button class="text-label" onclick="window.scrollTo({top:0,behavior:'smooth'})">BACK TO TOP &uarr;</button>
-    </div>
-</footer>
+    </section>
 
-<!-- ============ SCRIPTS ============ -->
-<script>
-// ===== GSAP ScrollTrigger Setup =====
-gsap.registerPlugin(ScrollTrigger);
+    <!-- ============ ABOUT ============ -->
+    <section class="about" id="about">
+        <div class="about-decor font-display">01</div>
+        <div class="about-inner">
+            <div class="about-grid">
+                <div class="about-keywords">
+                    <span class="text-label reveal">POWER</span>
+                    <span class="text-label reveal">ORIGIN</span>
+                    <span class="text-label reveal">BEAUTY</span>
+                    <span class="text-label reveal">ASYLUM</span>
+                    <span class="text-label reveal">OBSESSION</span>
+                    <span class="text-label reveal">STRENGTH</span>
+                </div>
 
-// ===== Mobile Menu =====
-function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
-}
-function closeMenu() {
-    document.getElementById('mobileMenu').classList.remove('open');
-}
+                <div class="about-photo-wrap">
+                    <div class="about-photo reveal">
+                        <img src="./images/about-photo.png" alt="Mission">
+                        <div class="about-photo-overlay">
+                            <div class="accent-line" id="accentLineAbout"></div>
+                            <p class="text-label label">ABOUT //</p>
+                            <h2>MISSION</h2>
+                            <h2 class="fade">MACHINE</h2>
+                        </div>
+                    </div>
+                </div>
 
-// ===== Smooth scroll for anchor links =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-    });
-});
+                <div class="about-bio">
+                    <div class="about-bio-inner reveal">
+                        <p class="text-label label">PHILOSOPHY</p>
+                        <h3>OBSESSED WITH PRECISION</h3>
+                        <p>I craft digital experiences where code meets design. Every function, every animation, every line is intentional. No bloat. No noise. Just raw development.</p>
+                        <a href="#contact" class="text-cta">READ MORE <span class="arrow">&rarr;</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// ===== Scroll Indicator Hide =====
-const scrollIndicator = document.getElementById('scrollIndicator');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > window.innerHeight * 0.3) {
-        scrollIndicator.style.opacity = '0';
-    } else {
-        scrollIndicator.style.opacity = '1';
-    }
-}, { passive: true });
+    <!-- ============ WORK — FULLSCREEN HORIZONTAL ============ -->
+    <section class="work" id="work">
+        <div class="work-decor font-display">02</div>
+        <div class="work-header">
+            <div class="label-wrap">
+                <div class="line"></div>
+                <span class="text-label">SELECTED WORKS</span>
+            </div>
+            <h2 class="text-display-l reveal">BUILT WITH</h2>
+            <h2 class="text-display-l orange reveal">OBSESSION</h2>
+        </div>
 
-// ===== Film Grain (Canvas) =====
-const canvas = document.getElementById('grainCanvas');
-if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let frameCount = 0;
-    let isActive = true;
+        <div class="work-pin-wrapper" id="workPinWrapper">
+            <div class="work-horizontal-track" id="workTrack">
+                <!-- Carte 1 -->
+                <div class="project-card-full" data-index="0">
+                    <div class="card-bg">
+                        <img src="./images/project-nocta.jpg" alt="NOCTA">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-number">01</span>
+                        <h3>NOCTA</h3>
+                        <p class="card-meta">BRAND IDENTITY / 2024</p>
+                    </div>
+                    <div class="card-hover-line"></div>
+                </div>
+                <!-- Carte 2 -->
+                <div class="project-card-full" data-index="1">
+                    <div class="card-bg">
+                        <img src="./images/project-mirage.jpg" alt="MIRAGE">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-number">02</span>
+                        <h3>MIRAGE</h3>
+                        <p class="card-meta">WEB EXPERIENCE / 2024</p>
+                    </div>
+                    <div class="card-hover-line"></div>
+                </div>
+                <!-- Carte 3 -->
+                <div class="project-card-full" data-index="2">
+                    <div class="card-bg">
+                        <img src="./images/project-steel.jpg" alt="STEEL">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-number">03</span>
+                        <h3>STEEL</h3>
+                        <p class="card-meta">E-COMMERCE / 2023</p>
+                    </div>
+                    <div class="card-hover-line"></div>
+                </div>
+                <!-- Carte 4 -->
+                <div class="project-card-full" data-index="3">
+                    <div class="card-bg">
+                        <img src="./images/project-prism.jpg" alt="PRISM">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-number">04</span>
+                        <h3>PRISM</h3>
+                        <p class="card-meta">INTERACTIVE / 2023</p>
+                    </div>
+                    <div class="card-hover-line"></div>
+                </div>
+            </div>
+        </div>
 
-    function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+        <div class="work-cta reveal">
+            <a href="#work" class="text-cta">
+                <span>VIEW ALL PROJECTS</span>
+                <span class="arrow">&rarr;</span>
+            </a>
+        </div>
+    </section>
 
-    function renderGrain() {
-        if (!isActive) { requestAnimationFrame(renderGrain); return; }
-        frameCount++;
-        if (frameCount % 3 === 0) {
-            const w = canvas.width;
-            const h = canvas.height;
-            const imageData = ctx.createImageData(w, h);
-            const data = imageData.data;
-            for (let i = 0; i < data.length; i += 4) {
-                const v = Math.random() * 255;
-                data[i] = v;
-                data[i+1] = v;
-                data[i+2] = v;
-                data[i+3] = 10; // very subtle
+    <!-- ============ CONTACT ============ -->
+    <section class="contact" id="contact">
+        <div class="contact-decor font-display">03</div>
+        <div class="contact-inner">
+            <div class="contact-grid">
+                <div class="contact-panel reveal">
+                    <span class="decor font-display" aria-hidden="true">03</span>
+                    <p class="text-label label">LET'S CREATE</p>
+                    <h2>START A</h2>
+                    <h2>PROJECT</h2>
+                    <p>Have an idea? Let's talk. I take on select projects that challenge the boundary between design and technology.</p>
+                    <a href="mailto:mabengikatambaku@gmail.com" class="text-cta cta-btn">GET IN TOUCH &rarr;</a>
+                </div>
+
+                <div class="contact-right">
+                    <div class="contact-details">
+                        <div class="contact-item reveal reveal-delay-1">
+                            <p class="text-label label">EMAIL</p>
+                            <p class="value">mabengikatambaku@gmail.com</p>
+                        </div>
+                        <div class="contact-item reveal reveal-delay-2">
+                            <p class="text-label label">LOCATION</p>
+                            <p class="value">LUBUMBASHI, RDC</p>
+                        </div>
+                        <div class="contact-item reveal reveal-delay-3">
+                            <p class="text-label label">AVAILABILITY</p>
+                            <p class="value">OPEN FOR PROJECTS</p>
+                        </div>
+                    </div>
+                    <div class="contact-portrait reveal reveal-delay-4">
+                        <img src="./images/contact-portrait.png" alt="GMK_Dev">
+                        <p class="text-label caption">GMK_Dev &mdash; CREATIVE DEVELOPER</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span class="text-label">&copy; 2025 GMK_Dev</span>
+            <div class="footer-socials">
+                <!-- <a href="#" class="text-label">TW</a> -->
+                <a href="https://github.com/GedeonMabengi/" class="text-label">GitHub</a>
+                <a href="https://www.linkedin.com/in/g%C3%A9d%C3%A9on-mabengi-24b932291/" class="text-label">LinkedIn</a>
+                <!-- <a href="#" class="text-label">IG</a> -->
+            </div>
+            <button class="text-label" onclick="window.scrollTo({top:0,behavior:'smooth'})">BACK TO TOP &uarr;</button>
+        </div>
+    </footer>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script>
+        // ===== GSAP Plugins =====
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // ===== Mobile Menu =====
+        const hamburger = document.getElementById('hamburger');
+
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const isOpen = menu.classList.toggle('open');
+            hamburger.classList.toggle('open', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+            document.getElementById('mobileMenu').classList.remove('open');
+            hamburger.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ===== Smooth scroll pour les ancres =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    gsap.to(window, { duration: 1.2, scrollTo: { y: target, offsetY: 80 },
+                        ease: 'power3.inOut' });
+                }
+            });
+        });
+
+        // ===== Scroll Indicator =====
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > window.innerHeight * 0.3) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.transition = 'opacity 0.5s ease';
+            } else {
+                scrollIndicator.style.opacity = '1';
             }
-            ctx.putImageData(imageData, 0, 0);
+        }, { passive: true });
+
+        // ===== Film Grain (Canvas) =====
+        const canvas = document.getElementById('grainCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let frameCount = 0;
+            let isActive = true;
+
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            function renderGrain() {
+                if (!isActive) { requestAnimationFrame(renderGrain);
+                    return; }
+                frameCount++;
+                if (frameCount % 3 === 0) {
+                    const w = canvas.width;
+                    const h = canvas.height;
+                    const imageData = ctx.createImageData(w, h);
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const v = Math.random() * 255;
+                        data[i] = v;
+                        data[i + 1] = v;
+                        data[i + 2] = v;
+                        data[i + 3] = 10;
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                }
+                requestAnimationFrame(renderGrain);
+            }
+            renderGrain();
+
+            window.addEventListener('scroll', () => {
+                const hero = document.getElementById('hero');
+                const rect = hero.getBoundingClientRect();
+                const progress = Math.max(0, -rect.top / rect.height);
+                canvas.style.opacity = Math.max(0, 1 - progress);
+                isActive = progress < 1;
+            }, { passive: true });
         }
-        requestAnimationFrame(renderGrain);
-    }
-    renderGrain();
 
-    // Fade out grain on scroll
-    window.addEventListener('scroll', () => {
-        const hero = document.getElementById('hero');
-        const rect = hero.getBoundingClientRect();
-        const progress = Math.max(0, -rect.top / rect.height);
-        canvas.style.opacity = Math.max(0, 1 - progress);
-        isActive = progress < 1;
-    }, { passive: true });
-}
+        // ===== NAVIGATION — Changement de couleur dynamique =====
+        const nav = document.getElementById('nav');
+        let darkSectionsInView = 0;
 
-// ===== Scroll Reveal (fallback + GSAP enhancement) =====
-const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    darkSectionsInView++;
+                } else {
+                    darkSectionsInView = Math.max(0, darkSectionsInView - 1);
+                }
+            });
+            if (darkSectionsInView > 0) {
+                nav.classList.add('light');
+            } else {
+                nav.classList.remove('light');
+            }
+        }, {
+            rootMargin: '-80px 0px 0px 0px',
+            threshold: 0
+        });
+
+        // Observer les sections à fond sombre
+        const darkSections = document.querySelectorAll('.about, .contact');
+        darkSections.forEach(section => navObserver.observe(section));
+
+        // Ajouter un fond flouté à la nav après avoir scrollé un peu
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                nav.classList.add('scrolled-bg');
+            } else {
+                nav.classList.remove('scrolled-bg');
+            }
+        }, { passive: true });
+
+        // ===== Scroll Reveal =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Déclencher l'animation de la ligne d'accent dans About
+                    if (entry.target.closest('.about-photo')) {
+                        const accentLine = document.getElementById('accentLineAbout');
+                        if (accentLine) {
+                            setTimeout(() => accentLine.classList.add('revealed'), 400);
+                        }
+                    }
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== Hero Parallax =====
+        const heroName = document.querySelector('.hero-name');
+        const heroPortrait = document.querySelector('.hero-right');
+        const heroDecor = document.querySelector('.hero-decor');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const vh = window.innerHeight;
+            if (scrollY < vh) {
+                const progress = scrollY / vh;
+                if (heroName) heroName.style.transform = `translateY(${-progress * 80}px)`;
+                if (heroPortrait) heroPortrait.style.transform = `translateY(${-progress * 40}px)`;
+                if (heroDecor) heroDecor.style.transform = `translateY(${-progress * 120}px)`;
+            }
+        }, { passive: true });
+
+        // ===== COMPTEURS ANIMÉS =====
+        const countElements = document.querySelectorAll('.count[data-target]');
+        const countersAnimated = new Set();
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !countersAnimated.has(entry.target)) {
+                    countersAnimated.add(entry.target);
+                    const target = parseInt(entry.target.getAttribute('data-target'));
+                    const el = entry.target;
+                    gsap.to(el, {
+                        innerText: target,
+                        duration: 1.8,
+                        snap: { innerText: 1 },
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            el.textContent = Math.round(el.innerText);
+                        },
+                        onComplete: function() {
+                            el.textContent = target;
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.6 });
+
+        countElements.forEach(el => counterObserver.observe(el));
+
+        // ===== WORK SECTION — FULLSCREEN HORIZONTAL SCROLL =====
+        function setupWorkHorizontalScroll() {
+            const track = document.getElementById('workTrack');
+            const pinWrapper = document.getElementById('workPinWrapper');
+            const cards = document.querySelectorAll('.project-card-full');
+
+            if (!track || !pinWrapper || cards.length === 0) return;
+            if (window.innerWidth < 1024) {
+                // Sur tablette/mobile, on désactive le pin et on remet le track en flow normal
+                track.style.transform = 'none';
+                track.style.width = 'auto';
+                return;
+            }
+
+            // Nettoyer les anciens ScrollTriggers sur ces éléments
+            const existingST = ScrollTrigger.getById('workHorizontalScroll');
+            if (existingST) existingST.kill();
+
+            const totalCards = cards.length;
+            const viewportW = window.innerWidth;
+            const totalWidth = totalCards * viewportW;
+            const scrollDistance = totalWidth - viewportW;
+
+            track.style.width = `${totalWidth}px`;
+            track.style.transform = 'translateX(0px)';
+
+            // Animation principale du track horizontal
+            gsap.fromTo(track, { x: 0 }, {
+                x: -scrollDistance,
+                ease: 'none',
+                scrollTrigger: {
+                    id: 'workHorizontalScroll',
+                    trigger: pinWrapper,
+                    pin: true,
+                    scrub: 1.2,
+                    start: 'top top',
+                    end: () => `+=${scrollDistance}`,
+                    invalidateOnRefresh: true,
+                    anticipatePin: 1,
+                    onUpdate: function(self) {
+                        // Animation interne des cartes pendant le scroll
+                        const progress = self.progress;
+                        cards.forEach((card, i) => {
+                            const cardStart = i / (totalCards - 1);
+                            const cardEnd = (i + 1) / (totalCards - 1);
+                            const cardProgress = gsap.utils.clamp(0, 1, (progress -
+                                cardStart) / (cardEnd - cardStart));
+
+                            // Parallaxe interne de l'image
+                            const bgImg = card.querySelector('.card-bg img');
+                            if (bgImg && cardProgress > 0 && cardProgress < 1) {
+                                const parallaxX = (cardProgress - 0.5) * 40;
+                                bgImg.style.transform =
+                                    `scale(1.06) translateX(${parallaxX}px)`;
+                            } else if (bgImg) {
+                                bgImg.style.transform = 'scale(1) translateX(0px)';
+                            }
+
+                            // Opacité du contenu
+                            const content = card.querySelector('.card-content');
+                            if (content) {
+                                const opacity = gsap.utils.clamp(0.3, 1, 1 - Math.abs(
+                                    cardProgress - 0.5) * 2);
+                                content.style.opacity = opacity;
+                                content.style.transform = cardProgress < 0.5 ?
+                                    `translateY(${(0.5 - cardProgress) * 60}px)` :
+                                    `translateY(${-(cardProgress - 0.5) * 60}px)`;
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Animation du header Work
+            const workHeader = document.querySelector('.work-header');
+            if (workHeader) {
+                const headerST = ScrollTrigger.getById('workHeaderAnim');
+                if (headerST) headerST.kill();
+
+                gsap.fromTo(workHeader.querySelectorAll('h2'), { y: 60, opacity: 0 }, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        id: 'workHeaderAnim',
+                        trigger: pinWrapper,
+                        start: 'top 90%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
+
+            // Animation du CTA Work
+            const workCta = document.querySelector('.work-cta');
+            if (workCta) {
+                const ctaST = ScrollTrigger.getById('workCtaAnim');
+                if (ctaST) ctaST.kill();
+
+                gsap.fromTo(workCta, { y: 30, opacity: 0 }, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        id: 'workCtaAnim',
+                        trigger: pinWrapper,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
         }
-    });
-}, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
 
-revealElements.forEach(el => revealObserver.observe(el));
+        // Initialisation
+        setupWorkHorizontalScroll();
 
-// ===== Hero Parallax =====
-const heroName = document.querySelector('.hero-name');
-const heroPortrait = document.querySelector('.hero-right');
-const heroDecor = document.querySelector('.hero-decor');
+        // Debounce du resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Nettoyer tous les ScrollTriggers liés au work
+                const workSTs = ['workHorizontalScroll', 'workHeaderAnim', 'workCtaAnim'];
+                workSTs.forEach(id => {
+                    const st = ScrollTrigger.getById(id);
+                    if (st) st.kill();
+                });
+                // Réinitialiser
+                setupWorkHorizontalScroll();
+                ScrollTrigger.refresh();
+            }, 300);
+        });
 
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    const vh = window.innerHeight;
-    if (scrollY < vh) {
-        const progress = scrollY / vh;
-        if (heroName) heroName.style.transform = `translateY(${-progress * 80}px)`;
-        if (heroPortrait) heroPortrait.style.transform = `translateY(${-progress * 40}px)`;
-        if (heroDecor) heroDecor.style.transform = `translateY(${-progress * 120}px)`;
-    }
-}, { passive: true });
+        // ===== ANIMATIONS SUPPLÉMENTAIRES =====
 
-// ===== GSAP ScrollTrigger — WORK Section Animations =====
-const projectCards = document.querySelectorAll('.project-card');
-const workHeader = document.querySelector('.work-header');
+        // Animation du panneau Contact au scroll
+        const contactPanel = document.querySelector('.contact-panel');
+        if (contactPanel) {
+            gsap.fromTo(contactPanel, { x: -80, opacity: 0 }, {
+                x: 0,
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: contactPanel,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
 
-// Animate work header on scroll
-if (workHeader) {
-    gsap.from(workHeader.children, {
-        scrollTrigger: {
-            trigger: workHeader,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-        },
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.15,
-        ease: 'power3.out'
-    });
-}
+        // Animation des items de contact
+        const contactItems = document.querySelectorAll('.contact-item');
+        contactItems.forEach((item, i) => {
+            gsap.fromTo(item, { x: 40, opacity: 0 }, {
+                x: 0,
+                opacity: 1,
+                duration: 0.8,
+                delay: i * 0.15,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
 
-// Animate each project card with staggered entrance
-projectCards.forEach((card, index) => {
-    const img = card.querySelector('.img-wrap img');
-    const title = card.querySelector('h3');
-    const meta = card.querySelector('.meta');
+        // Animation du portrait contact
+        const contactPortrait = document.querySelector('.contact-portrait');
+        if (contactPortrait) {
+            gsap.fromTo(contactPortrait, { scale: 0.9, opacity: 0 }, {
+                scale: 1,
+                opacity: 1,
+                duration: 1,
+                delay: 0.5,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: contactPortrait,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
 
-    // Card entrance animation
-    gsap.from(card, {
-        scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-        },
-        x: 80,
-        opacity: 0,
-        duration: 1.2,
-        delay: index * 0.15,
-        ease: 'power3.out'
-    });
+        // Animation des mots-clés About (flottement séquentiel)
+        const keywords = document.querySelectorAll('.about-keywords span');
+        keywords.forEach((kw, i) => {
+            gsap.to(kw, {
+                y: -8,
+                duration: 1.5,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: i * 0.2,
+                scrollTrigger: {
+                    trigger: '.about',
+                    start: 'top 70%',
+                    toggleActions: 'play pause pause pause'
+                }
+            });
+        });
 
-    // Image scale reveal
-    gsap.from(card.querySelector('.img-wrap'), {
-        scrollTrigger: {
-            trigger: card,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-        },
-        scale: 0.85,
-        opacity: 0,
-        duration: 1.4,
-        delay: index * 0.15,
-        ease: 'power3.out'
-    });
+        // Animation de l'image About
+        const aboutPhotoImg = document.querySelector('.about-photo img');
+        if (aboutPhotoImg) {
+            gsap.fromTo(aboutPhotoImg, { scale: 1.15, opacity: 0.6 }, {
+                scale: 1,
+                opacity: 1,
+                duration: 1.5,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '.about-photo',
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
 
-    // Title slide up
-    gsap.from(title, {
-        scrollTrigger: {
-            trigger: card,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse'
-        },
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        delay: 0.2 + index * 0.15,
-        ease: 'power3.out'
-    });
+        // ===== EFFET DE SURVOL AVANCÉ SUR LES CARTES FULLSCREEN =====
+        document.querySelectorAll('.project-card-full').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                const bgImg = card.querySelector('.card-bg img');
+                if (bgImg && window.innerWidth >= 1024) {
+                    const moveX = (x - 0.5) * 20;
+                    const moveY = (y - 0.5) * 20;
+                    bgImg.style.transform = `scale(1.06) translate(${moveX}px, ${moveY}px)`;
+                }
+                const content = card.querySelector('.card-content');
+                if (content && window.innerWidth >= 1024) {
+                    const moveContentX = (x - 0.5) * 30;
+                    const moveContentY = (y - 0.5) * 20;
+                    content.style.transform = `translate(${moveContentX}px, ${moveContentY}px)`;
+                }
+            });
+            card.addEventListener('mouseleave', function() {
+                const bgImg = card.querySelector('.card-bg img');
+                if (bgImg) {
+                    bgImg.style.transform = 'scale(1) translate(0px, 0px)';
+                    bgImg.style.transition = 'transform 0.8s cubic-bezier(0.33, 1, 0.68, 1)';
+                }
+                const content = card.querySelector('.card-content');
+                if (content) {
+                    content.style.transform = 'translate(0px, 0px)';
+                    content.style.transition = 'transform 0.6s cubic-bezier(0.33, 1, 0.68, 1)';
+                }
+            });
+            card.addEventListener('mouseenter', function() {
+                const bgImg = card.querySelector('.card-bg img');
+                if (bgImg) bgImg.style.transition = 'transform 0.3s ease-out';
+                const content = card.querySelector('.card-content');
+                if (content) content.style.transition = 'transform 0.3s ease-out';
+            });
+        });
 
-    // Meta fade in
-    gsap.from(meta, {
-        scrollTrigger: {
-            trigger: card,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse'
-        },
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        delay: 0.4 + index * 0.15,
-        ease: 'power3.out'
-    });
-});
+        // ===== INITIALISATION FINALE =====
+        // Rafraîchir ScrollTrigger après le chargement complet
+        window.addEventListener('load', () => {
+            ScrollTrigger.refresh();
+            // Réactiver le scroll behavior smooth après initialisation
+            document.documentElement.style.scrollBehavior = 'smooth';
+        });
 
-// Horizontal scroll-driven parallax for the gallery
-const workGallery = document.getElementById('workGallery');
-if (workGallery && projectCards.length > 0) {
-    gsap.to(workGallery, {
-        scrollTrigger: {
-            trigger: '.work',
-            start: 'top center',
-            end: 'bottom center',
-            scrub: 1
-        },
-        x: -100,
-        ease: 'none'
-    });
-}
+        // Désactiver scrollBehavior pendant le scroll programmé GSAP
+        window.addEventListener('wheel', () => {
+            document.documentElement.style.scrollBehavior = 'auto';
+            clearTimeout(window._scrollBehaviorTimeout);
+            window._scrollBehaviorTimeout = setTimeout(() => {
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }, 300);
+        }, { passive: true });
 
-// Work CTA animation
-const workCta = document.querySelector('.work-cta');
-if (workCta) {
-    gsap.from(workCta, {
-        scrollTrigger: {
-            trigger: workCta,
-            start: 'top 90%',
-            toggleActions: 'play none none reverse'
-        },
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out'
-    });
-}
-</script>
-
+        console.log('%c🚀 GMK_Dev Portfolio %cReady',
+            'font-family:Space Grotesk,sans-serif;font-size:24px;color:#E8552A;',
+            'font-family:Inter,sans-serif;font-size:14px;color:#0A0A0A;');
+        console.log('%cCreative Developer & AI Product Builder',
+            'font-family:JetBrains Mono,monospace;font-size:11px;color:#B0B0A8;');
+    </script>
 </body>
 </html>
