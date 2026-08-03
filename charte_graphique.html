@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charte Graphique - GMK_Dev</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: justify;
+            text-align-last: left;
+        }
+
+        @page {
+            size: A4;
+            margin: 2.5cm 2cm;
+            @top-center { content: string(doctitle); font-size: 9pt; color: #999; }
+            @bottom-center { content: counter(page); font-size: 9pt; color: #999; }
+        }
+
+        @page :first { margin: 0; @top-center { content: none; } @bottom-center { content: none; } }
+        @page cover { @top-center { content: none; } @bottom-center { content: none; } }
+        @page toc { @top-center { content: none; } @bottom-center { content: none; } }
+
+        .cover { page: cover; }
+        .toc-page { page: toc; }
+
+        body { string-set: doctitle ""; }
+        h1 { string-set: doctitle content(); }
+
+        /* ========== COVER ========== */
+        .cover {
+            width: 210mm;
+            height: 297mm;
+            position: relative;
+            overflow: hidden;
+            background: #0A0A0A;
+            page-break-after: always;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 40mm;
+            right: -30mm;
+            width: 120mm;
+            height: 120mm;
+            border: 2px solid rgba(232, 85, 42, 0.15);
+            border-radius: 20mm;
+            transform: rotate(15deg);
+        }
+
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: 60mm;
+            left: -20mm;
+            width: 80mm;
+            height: 80mm;
+            border: 2px solid rgba(232, 85, 42, 0.1);
+            border-radius: 15mm;
+            transform: rotate(-10deg);
+        }
+
+        .cover-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8mm;
+            background: #E8552A;
+        }
+
+        .cover-accent {
+            position: absolute;
+            top: 30mm;
+            left: 20mm;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10pt;
+            color: #E8552A;
+            letter-spacing: 0.12em;
+        }
+
+        .cover-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+        }
+
+        .cover-logo {
+            width: 140mm;
+            height: auto;
+            margin-bottom: 15mm;
+            filter: brightness(0) invert(1);
+        }
+
+        .cover-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32pt;
+            font-weight: 700;
+            color: #F5F5F0;
+            letter-spacing: -0.02em;
+            margin-bottom: 8mm;
+        }
+
+        .cover-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 13pt;
+            font-weight: 400;
+            color: #B0B0A8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 30mm;
+        }
+
+        .cover-meta {
+            position: absolute;
+            bottom: 25mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9pt;
+            color: #666;
+            letter-spacing: 0.05em;
+        }
+
+        .cover-line {
+            position: absolute;
+            bottom: 35mm;
+            left: 20mm;
+            right: 20mm;
+            height: 1px;
+            background: rgba(232, 85, 42, 0.3);
+        }
+
+        /* ========== TOC ========== */
+        .toc-page {
+            page-break-after: always;
+            padding-top: 2cm;
+        }
+
+        .toc-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24pt;
+            font-weight: 700;
+            color: #0A0A0A;
+            margin-bottom: 1.5cm;
+            padding-bottom: 0.5cm;
+            border-bottom: 3px solid #E8552A;
+        }
+
+        .toc { list-style: none; padding: 0; }
+        .toc li { margin-bottom: 0.4cm; }
+        .toc a {
+            text-decoration: none;
+            color: #333;
+            font-size: 11pt;
+            display: flex;
+            justify-content: space-between;
+        }
+        .toc a::after {
+            content: leader('.') target-counter(attr(href url), page);
+            color: #999;
+        }
+        .toc a:hover { color: #E8552A; }
+        .toc .toc-h1 { font-weight: 600; font-size: 12pt; margin-top: 0.6cm; }
+        .toc .toc-h2 { padding-left: 1cm; font-size: 10.5pt; color: #555; }
+
+        /* ========== HEADINGS ========== */
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22pt;
+            font-weight: 700;
+            color: #0A0A0A;
+            margin-top: 0;
+            margin-bottom: 0.8cm;
+            padding-bottom: 0.3cm;
+            border-bottom: 2px solid #E8552A;
+            page-break-after: avoid;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16pt;
+            font-weight: 700;
+            color: #0A0A0A;
+            margin-top: 1cm;
+            margin-bottom: 0.5cm;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 12pt;
+            font-weight: 600;
+            color: #2A2A2A;
+            margin-top: 0.6cm;
+            margin-bottom: 0.3cm;
+            page-break-after: avoid;
+        }
+
+        p { margin-bottom: 0.4cm; }
+
+        /* ========== TABLES ========== */
+        table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            margin: 0.5cm 0;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+
+        thead { border-top: 2px solid #0A0A0A; border-bottom: 1px solid #0A0A0A; }
+        tbody { border-bottom: 2px solid #0A0A0A; }
+
+        th {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-align: left;
+            padding: 0.3cm 0.3cm;
+            color: #0A0A0A;
+            background: #f5f5f0;
+        }
+
+        td {
+            padding: 0.25cm 0.3cm;
+            vertical-align: top;
+            color: #333;
+        }
+
+        tr { page-break-inside: avoid; }
+
+        /* ========== COLOR SWATCHES ========== */
+        .color-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4cm;
+            margin: 0.5cm 0;
+        }
+
+        .color-swatch {
+            width: 3.5cm;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .color-box {
+            width: 100%;
+            height: 2cm;
+            border: 1px solid #ddd;
+            margin-bottom: 0.2cm;
+        }
+
+        .color-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            color: #555;
+        }
+
+        .color-name {
+            font-size: 9pt;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* ========== LOGO SHOWCASE ========== */
+        .logo-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5cm;
+            margin: 0.5cm 0;
+        }
+
+        .logo-item {
+            width: 7cm;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .logo-item img {
+            max-width: 100%;
+            height: auto;
+            max-height: 3cm;
+        }
+
+        .logo-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            color: #666;
+            margin-top: 0.2cm;
+        }
+
+        /* ========== DO / DON'T ========== */
+        .dodont {
+            display: flex;
+            gap: 0.5cm;
+            margin: 0.5cm 0;
+        }
+
+        .do, .dont {
+            flex: 1;
+            padding: 0.4cm;
+            border-left: 3px solid;
+            background: #fafafa;
+        }
+
+        .do { border-left-color: #2ecc71; }
+        .dont { border-left-color: #e74c3c; }
+
+        .do-title, .dont-title {
+            font-weight: 600;
+            font-size: 10pt;
+            margin-bottom: 0.2cm;
+        }
+
+        .do-title { color: #27ae60; }
+        .dont-title { color: #c0392b; }
+
+        .do ul, .dont ul {
+            margin: 0;
+            padding-left: 0.5cm;
+            font-size: 9.5pt;
+        }
+
+        /* ========== TYPOGRAPHY DEMO ========== */
+        .type-demo {
+            margin: 0.5cm 0;
+            padding: 0.5cm;
+            background: #fafafa;
+            border-left: 3px solid #E8552A;
+        }
+
+        .type-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            color: #E8552A;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.1cm;
+        }
+
+        /* ========== UTILS ========== */
+        .page-break { page-break-before: always; }
+
+        .section { margin-bottom: 1cm; }
+
+        .note {
+            padding: 0.4cm 0.5cm;
+            background: #f5f5f0;
+            border-left: 3px solid #E8552A;
+            margin: 0.4cm 0;
+            font-size: 10pt;
+        }
+
+        figure {
+            margin: 0.5cm 0;
+            page-break-inside: avoid;
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 80%;
+            max-height: 35vh;
+            height: auto;
+        }
+
+        figcaption {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 0.2cm;
+        }
+
+        figcaption::before {
+            content: attr(data-label) " — ";
+            font-weight: 600;
+            color: #333;
+        }
+
+        pre, table, figure, img, svg, blockquote {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        a { word-break: break-all; color: #E8552A; }
+    </style>
+</head>
+<body>
+
+<!-- ========== COVER ========== -->
+<div class="cover">
+    <div class="cover-top-bar"></div>
+    <div class="cover-accent">&lt;/&gt; GMK_Dev</div>
+    <div class="cover-content">
+        <img src="app/public/images/logo_gmk_main.png" alt="GMK_Dev Logo" class="cover-logo">
+        <h1 class="cover-title" style="border:none;color:#F5F5F0;">CHARTE GRAPHIQUE</h1>
+        <p class="cover-subtitle">Identite Visuelle &amp; Design System</p>
+    </div>
+    <div class="cover-line"></div>
+    <div class="cover-meta">
+        <span>GMK_Dev</span>
+        <span>v1.0 — Mai 2026</span>
+    </div>
+</div>
+
+<!-- ========== TOC ========== -->
+<div class="toc-page">
+    <h2 class="toc-title">Sommaire</h2>
+    <ul class="toc">
+        <li class="toc-h1"><a href="#sec1">1. Presentation du Logo</a></li>
+        <li class="toc-h2"><a href="#sec1-1">1.1 Versions du Logo</a></li>
+        <li class="toc-h2"><a href="#sec1-2">1.2 Construction du Logo</a></li>
+        <li class="toc-h1"><a href="#sec2">2. Palette de Couleurs</a></li>
+        <li class="toc-h2"><a href="#sec2-1">2.1 Couleurs Principales</a></li>
+        <li class="toc-h2"><a href="#sec2-2">2.2 Couleurs Secondaires</a></li>
+        <li class="toc-h1"><a href="#sec3">3. Typographie</a></li>
+        <li class="toc-h2"><a href="#sec3-1">3.1 Police Display</a></li>
+        <li class="toc-h2"><a href="#sec3-2">3.2 Police Body</a></li>
+        <li class="toc-h2"><a href="#sec3-3">3.3 Police Labels</a></li>
+        <li class="toc-h2"><a href="#sec3-4">3.4 Echelle Typographique</a></li>
+        <li class="toc-h1"><a href="#sec4">4. Regles d'Utilisation</a></li>
+        <li class="toc-h2"><a href="#sec4-1">4.1 Espace de Protection</a></li>
+        <li class="toc-h2"><a href="#sec4-2">4.2 Taille Minimale</a></li>
+        <li class="toc-h2"><a href="#sec4-3">4.3 Utilisations Correctes et Incorrectes</a></li>
+        <li class="toc-h1"><a href="#sec5">5. Compositions &amp; Fonds</a></li>
+        <li class="toc-h1"><a href="#sec6">6. Signature Visuelle</a></li>
+    </ul>
+</div>
+
+<!-- ========== SECTION 1 ========== -->
+<h1 id="sec1">1. Presentation du Logo</h1>
+
+<p>Le logo <strong>GMK_Dev</strong> est compose d'une fenetre d'editeur de code (IDE) aux coins arrondis, contenant les initiales <strong>GMK</strong> en majuscules avec le suffixe <strong>_dev</strong> en orange. Le symbole <strong>&lt;/&gt;</strong> dans la barre de titre rappelle l'univers du developpement web.</p>
+
+<div class="note">
+    <strong>Concept :</strong> Le logo evoque un terminal de developpeur — l'environnement naturel du codeur. Les initiales GMK occupent l'espace central, affirmant l'identite, tandis que le _dev en bas a gauche signale la specialite.
+</div>
+
+<h2 id="sec1-1">1.1 Versions du Logo</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Fichier</th>
+            <th>Usage recommande</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Principale</strong></td>
+            <td><code>logo_gmk_main.png</code></td>
+            <td>Usage general, fonds clairs ou dores</td>
+        </tr>
+        <tr>
+            <td><strong>Horizontale</strong></td>
+            <td><code>logo_gmk_horizontal.png</code></td>
+            <td>Bannieres, en-tetes larges</td>
+        </tr>
+        <tr>
+            <td><strong>Monochrome</strong></td>
+            <td><code>logo_gmk_monochrome.png</code></td>
+            <td>Impression noir/blanc, gravure</td>
+        </tr>
+        <tr>
+            <td><strong>Inversee (blanche)</strong></td>
+            <td><code>logo_gmk_inverted.png</code></td>
+            <td>Fonds sombres, footer noir</td>
+        </tr>
+        <tr>
+            <td><strong>Favicon</strong></td>
+            <td><code>favicon.png</code></td>
+            <td>Onglet navigateur, icone application</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="sec1-2">1.2 Construction du Logo</h2>
+
+<figure>
+    <img src="app/public/images/logo_gmk_main.png" alt="Logo GMK_Dev - version principale">
+    <figcaption data-label="Fig. 1">Logo GMK_Dev — version principale sur fond transparent</figcaption>
+</figure>
+
+<h3>Elements constitutifs</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Element</th>
+            <th>Description</th>
+            <th>Couleur</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Fenetre IDE</td>
+            <td>Rectangle arrondi avec bordures fines doubles</td>
+            <td>#2A2A2A (gris fonce)</td>
+        </tr>
+        <tr>
+            <td>Barre de titre</td>
+            <td>Bandeau superieur de la fenetre</td>
+            <td>#2A2A2A</td>
+        </tr>
+        <tr>
+            <td>Symbole &lt;/&gt;</td>
+            <td>Chevrons de code en haut a droite</td>
+            <td>#E8552A (orange)</td>
+        </tr>
+        <tr>
+            <td>Lettres GMK</td>
+            <td>Initiales en majuscules, police geometrique bold</td>
+            <td>#E0E0D8 (gris tres clair)</td>
+        </tr>
+        <tr>
+            <td>Suffixe _dev</td>
+            <td>Texte en bas a gauche de la fenetre</td>
+            <td>#E8552A (orange)</td>
+        </tr>
+        <tr>
+            <td>Interieur</td>
+            <td>Fond transparent de la fenetre</td>
+            <td>Transparent</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========== SECTION 2 ========== -->
+<h1 id="sec2" class="page-break">2. Palette de Couleurs</h1>
+
+<h2 id="sec2-1">2.1 Couleurs Principales</h2>
+
+<div class="color-grid">
+    <div class="color-swatch">
+        <div class="color-box" style="background:#0A0A0A;"></div>
+        <div class="color-name">Noir</div>
+        <div class="color-hex">#0A0A0A</div>
+        <div class="color-hex">rgb(10, 10, 10)</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#F5F5F0;border:1px solid #ddd;"></div>
+        <div class="color-name">Blanc</div>
+        <div class="color-hex">#F5F5F0</div>
+        <div class="color-hex">rgb(245, 245, 240)</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#E8552A;"></div>
+        <div class="color-name">Orange GMK</div>
+        <div class="color-hex">#E8552A</div>
+        <div class="color-hex">rgb(232, 85, 42)</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#D0451A;"></div>
+        <div class="color-name">Orange fonce</div>
+        <div class="color-hex">#D0451A</div>
+        <div class="color-hex">rgb(208, 69, 26)</div>
+    </div>
+</div>
+
+<h3>Usage des couleurs principales</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Couleur</th>
+            <th>Usage</th>
+            <th>Exemples</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Noir #0A0A0A</strong></td>
+            <td>Corps de texte, fonds de section, contours</td>
+            <td>Texte principal, fond About/Contact</td>
+        </tr>
+        <tr>
+            <td><strong>Blanc #F5F5F0</strong></td>
+            <td>Fond de page, texte sur fond sombre</td>
+            <td>Background hero, work section</td>
+        </tr>
+        <tr>
+            <td><strong>Orange #E8552A</strong></td>
+            <td>Accent, CTA, etats actifs, hover</td>
+            <td>Boutons, _dev, &lt;/&gt;, hover liens</td>
+        </tr>
+        <tr>
+            <td><strong>Orange fonce #D0451A</strong></td>
+            <td>Hover des boutons orange</td>
+            <td>Etat hover du CTA principal</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="sec2-2">2.2 Couleurs Secondaires</h2>
+
+<div class="color-grid">
+    <div class="color-swatch">
+        <div class="color-box" style="background:#2A2A2A;"></div>
+        <div class="color-name">Gris fonce</div>
+        <div class="color-hex">#2A2A2A</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#4A4A4A;"></div>
+        <div class="color-name">Gris moyen</div>
+        <div class="color-hex">#4A4A4A</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#B0B0A8;"></div>
+        <div class="color-name">Gris clair</div>
+        <div class="color-hex">#B0B0A8</div>
+    </div>
+    <div class="color-swatch">
+        <div class="color-box" style="background:#E0E0D8;"></div>
+        <div class="color-name">Gris tres clair</div>
+        <div class="color-hex">#E0E0D8</div>
+    </div>
+</div>
+
+<h3>Usage des couleurs secondaires</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Couleur</th>
+            <th>Usage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Gris fonce #2A2A2A</strong></td>
+            <td>Texte secondaire, barre de titre du logo, bordures</td>
+        </tr>
+        <tr>
+            <td><strong>Gris moyen #4A4A4A</strong></td>
+            <td>Bordures du logo, elements desactives</td>
+        </tr>
+        <tr>
+            <td><strong>Gris clair #B0B0A8</strong></td>
+            <td>Labels, metadata, texte desactive</td>
+        </tr>
+        <tr>
+            <td><strong>Gris tres clair #E0E0D8</strong></td>
+            <td>Lettres GMK dans le logo, elements decoratifs</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========== SECTION 3 ========== -->
+<h1 id="sec3" class="page-break">3. Typographie</h1>
+
+<p>Trois polices constituent l'identite typographique de GMK_Dev. Chacune joue un role specifique dans la hierarchie visuelle.</p>
+
+<h2 id="sec3-1">3.1 Police Display — Space Grotesk</h2>
+
+<div class="type-demo">
+    <div class="type-name">Space Grotesk Bold 700</div>
+    <p style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18pt;color:#0A0A0A;margin:0;">GMK_Dev — Creative Developer</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14pt;color:#0A0A0A;margin:0.1cm 0 0;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+    <p style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12pt;color:#666;margin:0.1cm 0 0;">abcdefghijklmnopqrstuvwxyz 0123456789</p>
+</div>
+
+<p><strong>Role :</strong> Titres, hero, noms de projets, lettres decoratives.<br>
+<strong>Caracteristiques :</strong> Geometrique, bold, forte personnalite. Utilisee pour les grands titres et elements d'impact.</p>
+
+<h2 id="sec3-2">3.2 Police Body — Inter</h2>
+
+<div class="type-demo">
+    <div class="type-name">Inter Regular 400 / Medium 500</div>
+    <p style="font-family:'Inter',sans-serif;font-weight:400;font-size:11pt;color:#333;margin:0;line-height:1.6;">
+        Le developpement web est un art qui allie precision technique et sensibilite esthetique. Chaque ligne de code compte.
+    </p>
+    <p style="font-family:'Inter',sans-serif;font-weight:500;font-size:11pt;color:#333;margin:0.2cm 0 0;">
+        <strong>Inter Medium</strong> — pour les accents et le texte de boutons.
+    </p>
+</div>
+
+<p><strong>Role :</strong> Texte courant, descriptions, boutons.<br>
+<strong>Caracteristiques :</strong> Neo-grotesque, haute lisibilite, excellent rendu a petite taille.</p>
+
+<h2 id="sec3-3">3.3 Police Labels — JetBrains Mono</h2>
+
+<div class="type-demo">
+    <div class="type-name">JetBrains Mono Regular 400</div>
+    <p style="font-family:'JetBrains Mono',monospace;font-weight:400;font-size:10pt;color:#2A2A2A;margin:0;letter-spacing:0.12em;text-transform:uppercase;">
+        WORK / ABOUT / CONTACT / LET'S TALK
+    </p>
+    <p style="font-family:'JetBrains Mono',monospace;font-weight:400;font-size:9pt;color:#666;margin:0.2cm 0 0;letter-spacing:0.08em;text-transform:uppercase;">
+        abcdefghijklmnopqrstuvwxyz 0123456789
+    </p>
+</div>
+
+<p><strong>Role :</strong> Labels uppercase, navigation, metadata, specs.<br>
+<strong>Caracteristiques :</strong> Monospace, allure technique, lettres espaces. Identite developpeur renforcee.</p>
+
+<h2 id="sec3-4">3.4 Echelle Typographique</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Taille</th>
+            <th>Interligne</th>
+            <th>Usage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Display XXL</strong></td>
+            <td>clamp(140px, 18vw, 260px)</td>
+            <td>0.85</td>
+            <td>Lettres decoratives (01, 02, 03...)</td>
+        </tr>
+        <tr>
+            <td><strong>Display XL</strong></td>
+            <td>clamp(80px, 10vw, 140px)</td>
+            <td>0.90</td>
+            <td>Nom hero (GMK)</td>
+        </tr>
+        <tr>
+            <td><strong>Display L</strong></td>
+            <td>clamp(48px, 6vw, 80px)</td>
+            <td>1.00</td>
+            <td>Titres de section</td>
+        </tr>
+        <tr>
+            <td><strong>Heading M</strong></td>
+            <td>clamp(32px, 3.5vw, 48px)</td>
+            <td>1.10</td>
+            <td>Titres de projets</td>
+        </tr>
+        <tr>
+            <td><strong>Body</strong></td>
+            <td>16px</td>
+            <td>1.60</td>
+            <td>Paragraphes, descriptions</td>
+        </tr>
+        <tr>
+            <td><strong>Labels</strong></td>
+            <td>11px</td>
+            <td>1.30</td>
+            <td>Metadata, nav, specs (uppercase, ls: 0.12em)</td>
+        </tr>
+        <tr>
+            <td><strong>CTA Text</strong></td>
+            <td>13px</td>
+            <td>1.00</td>
+            <td>Texte des boutons (uppercase, ls: 0.08em)</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========== SECTION 4 ========== -->
+<h1 id="sec4" class="page-break">4. Regles d'Utilisation</h1>
+
+<h2 id="sec4-1">4.1 Espace de Protection</h2>
+
+<p>Le logo doit toujours etre entoure d'un <strong>espace vide minimum</strong> egal a la hauteur du <code>_dev</code> sur tous les cotes. Cet espace de protection garantit la lisibilite et l'integrite du logo.</p>
+
+<div class="note">
+    <strong>Regle d'or :</strong> Ne jamais placer de texte, d'image ou d'element graphique dans la zone de protection du logo.
+</div>
+
+<h2 id="sec4-2">4.2 Taille Minimale</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Taille minimale</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Principale</td>
+            <td>120 px de large minimum</td>
+        </tr>
+        <tr>
+            <td>Favicon</td>
+            <td>32 x 32 px</td>
+        </tr>
+        <tr>
+            <td>Impression</td>
+            <td>30 mm de large minimum</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="sec4-3">4.3 Utilisations Correctes et Incorrectes</h2>
+
+<h3>Sur fond fonce</h3>
+<p>Utiliser la version <strong>inversee (blanche)</strong> ou la version <strong>principale</strong> sur fond noir.</p>
+
+<h3>Sur fond clair</h3>
+<p>Utiliser la version <strong>principale</strong> (transparente).</p>
+
+<h3>Interdictions</h3>
+
+<div class="dodont">
+    <div class="dont">
+        <div class="dont-title">NE JAMAIS</div>
+        <ul>
+            <li>Deformer le logo (etirer, compresser)</li>
+            <li>Changer les couleurs du logo</li>
+            <li>Ajouter des effets (ombres, degrades, contours)</li>
+            <li>Tourner le logo</li>
+            <li>Separer les elements du logo</li>
+            <li>Utiliser le logo sur un fond de couleur vive</li>
+            <li>Placer le logo trop petit (&lt; 120px)</li>
+        </ul>
+    </div>
+    <div class="do">
+        <div class="do-title">TOUJOURS</div>
+        <ul>
+            <li>Respecter les proportions du logo</li>
+            <li>Utiliser les couleurs de la charte</li>
+            <li>Preserver l'espace de protection</li>
+            <li>Utiliser la version adaptee au fond</li>
+            <li>Maintenir le logo a une taille lisible</li>
+            <li>Preferer les fonds neutres (blanc, noir, gris)</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ========== SECTION 5 ========== -->
+<h1 id="sec5" class="page-break">5. Compositions &amp; Fonds</h1>
+
+<p>Le logo GMK_Dev s'adapte a differents fonds. Le choix de la version depend du contraste et de l'ambiance souhaitee.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fond</th>
+            <th>Hex</th>
+            <th>Logo recommande</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="background:#F5F5F0;">Blanc cassé</td>
+            <td>#F5F5F0</td>
+            <td>Principale (transparent)</td>
+        </tr>
+        <tr>
+            <td style="background:#0A0A0A;color:#fff;">Noir</td>
+            <td>#0A0A0A</td>
+            <td>Inversee (blanche)</td>
+        </tr>
+        <tr>
+            <td style="background:#E8552A;color:#fff;">Orange GMK</td>
+            <td>#E8552A</td>
+            <td>Inversee (blanche)</td>
+        </tr>
+        <tr>
+            <td style="background:#2A2A2A;color:#fff;">Gris fonce</td>
+            <td>#2A2A2A</td>
+            <td>Principale ou Inversee</td>
+        </tr>
+        <tr>
+            <td>Image / Gris</td>
+            <td>—</td>
+            <td>Au choix selon le contraste</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note">
+    <strong>Regle pratique :</strong> Toujours s'assurer que les lettres <strong>GMK</strong> et le <strong>_dev</strong> sont lisibles sur le fond choisi. En cas de doute, preferer le fond blanc ou noir.
+</div>
+
+<!-- ========== SECTION 6 ========== -->
+<h1 id="sec6" class="page-break">6. Signature Visuelle</h1>
+
+<h3>Elements identitaires</h3>
+
+<p>L'identite visuelle GMK_Dev repose sur quatre elements distinctifs :</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Element</th>
+            <th>Signification</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>La fenetre code arrondie</strong></td>
+            <td>Symbole universel du developpement, l'IDE est l'atelier du codeur</td>
+        </tr>
+        <tr>
+            <td><strong>Le &lt;/&gt; orange</strong></td>
+            <td>Identite developpeur, symbole HTML universel du web</td>
+        </tr>
+        <tr>
+            <td><strong>Le _dev</strong></td>
+            <td>Suffixe signature en orange, rappelle la specialite technique</td>
+        </tr>
+        <tr>
+            <td><strong>Les lettres GMK</strong></td>
+            <td>Initiales en gris clair, bien visibles, ancrent l'identite personnelle</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Ambiance</h3>
+
+<p>L'univers visuel GMK_Dev est defini par :</p>
+
+<ul style="margin-left:1cm;">
+    <li><strong>Brutalisme doux</strong> — formes geometriques pures, pas d'ornement superflu</li>
+    <li><strong>Minimalisme technique</strong> — chaque element a une fonction</li>
+    <li><strong>Monochrome + accent</strong> — noir, blanc, gris avec un seul point d'orange</li>
+    <li><strong>Style editorial</strong> — typographie bold, espaces blancs genereux</li>
+    <li><strong>Images en noir et blanc</strong> — coherence photographique totale</li>
+</ul>
+
+<div class="note">
+    <strong>Philosophie :</strong> "Chaque pixel, chaque interaction, chaque ligne de code est intentionnel. Pas de remplissage. Pas de bruit. Juste du craft brut."
+</div>
+
+<h3>Applications</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Support</th>
+            <th>Application</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Site web (portfolio)</td>
+            <td>Navigation, hero, footer, favicon</td>
+        </tr>
+        <tr>
+            <td>Reseaux sociaux</td>
+            <td>Avatar, banniere, posts</td>
+        </tr>
+        <tr>
+            <td>Email / Signature</td>
+            <td>Logo en pied de page</td>
+        </tr>
+        <tr>
+            <td>Carte de visite</td>
+            <td>Recto, verso coordonnees</td>
+        </tr>
+        <tr>
+            <td>Impression</td>
+            <td>Version monochrome recommandee</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
